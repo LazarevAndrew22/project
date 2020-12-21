@@ -1,0 +1,29 @@
+version: '3'
+services:
+  app:
+    build: ./docker/php
+    container_name: project
+    volumes:
+      - ./:/var/www
+  nginx:
+    image: nginx:1.17
+    container_name: nginx
+    ports:
+      - 8002:80
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/project.com.conf:/etc/nginx/conf.d/project.com.conf
+    depends_on:
+      - app
+  db:
+    image: mysql:8.0.22
+    ports:
+      - 3307:3307
+    container_name: project_db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: andrew_db
+      MYSQL_USER: andrew
+      MYSQL_PASSWORD: 1930
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
